@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f7e9c9">
+<title>森林裡的 TKU 校園探險</title>
+<style>
+  :root{--ink:#3d382d;--leaf:#356b4a;--leaf-dark:#244d39;--cream:#fff9e9;--gold:#f4c96a;--red:#c93335;--red-dark:#9e2028;--muted:#756d5d;--shadow:0 16px 40px #60442624}
+  *{box-sizing:border-box}
+  html{min-height:100%;background:#f5e6c4}
+  body{margin:0;min-height:100vh;color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif;background:radial-gradient(ellipse at 10% 12%,#fff7dc 0 8%,transparent 32%),linear-gradient(180deg,#f4e9c9 0%,#e9e1b5 58%,#d6d9a5 100%);}
+  button{font:inherit}
+  .page{width:min(1100px,100%);margin:auto;padding:22px 22px 32px}
+  .topline{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 4px 15px}
+  .brand{font-weight:900;letter-spacing:.04em;color:var(--leaf-dark);font-size:clamp(19px,3vw,25px)}
+  .brand span{display:inline-grid;place-items:center;width:36px;height:36px;margin-right:8px;border-radius:50%;background:#fff5d7;box-shadow:0 3px 0 #d5c28b;font-size:20px;vertical-align:middle}
+  .source-pill{font-size:12px;color:#655e4e;background:#fff9e9c9;border:1px solid #e6d8b5;border-radius:99px;padding:7px 12px}
+  .game{position:relative;overflow:hidden;border:1px solid #e8dcb7;border-radius:30px;background:linear-gradient(180deg,#fff9ea 0%,#fff5dd 48%,#f7f0d5 100%);box-shadow:var(--shadow);min-height:620px}
+  .game:before,.game:after{content:"";position:absolute;pointer-events:none;border-radius:50%;background:#c7d69a55;filter:blur(1px)}
+  .game:before{width:310px;height:220px;left:-145px;top:190px}.game:after{width:360px;height:260px;right:-190px;top:220px;background:#d5dba555}
+  .screen{position:relative;z-index:1;padding:clamp(18px,4vw,38px)}
+  .intro{min-height:610px;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:20px}
+  .intro-copy{padding:10px 0 20px 12px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--leaf);font-size:14px;font-weight:800;background:#e8f0d8;border-radius:999px;padding:8px 13px}
+  h1{font-size:clamp(34px,6vw,62px);line-height:1.12;letter-spacing:.02em;margin:18px 0 15px;color:#344b34}
+  h1 em{font-style:normal;color:#b13b36;display:block}
+  .intro-copy p{font-size:clamp(16px,2vw,19px);line-height:1.8;color:#645c4a;max-width:510px;margin:0 0 23px}
+  .start-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .primary{border:0;border-radius:999px;background:linear-gradient(180deg,#df654d,#b93632);color:white;font-weight:850;padding:14px 25px;box-shadow:0 5px 0 #8f2a2a,0 10px 22px #8f2a2a26;cursor:pointer;transition:transform .15s,filter .15s}
+  .primary:hover{transform:translateY(-2px);filter:brightness(1.06)}.primary:active{transform:translateY(3px);box-shadow:0 2px 0 #8f2a2a}
+  .tiny-note{font-size:13px;color:#746a55}
+  .intro-art{position:relative;min-height:350px;display:grid;place-items:center}
+  .intro-art .sun{position:absolute;width:230px;height:230px;top:28px;right:14%;border-radius:50%;background:#f7d788;opacity:.55}
+  .intro-art .tree{position:absolute;bottom:24px;width:100%;height:210px;opacity:.88}
+  .intro-art .elk-img-wrapper{z-index:10;width:min(100%,420px);height:auto;display:flex;justify-content:center;align-items:center}
+  /* 初始首頁麋鹿圖：加大尺寸 */
+  .intro-art img.elk-img{max-width:100%;height:auto;max-height:350px;position:relative;z-index:10;transform:scale(1.15);filter:drop-shadow(0 10px 6px #454e2a3a)}
+  .quiz-screen{display:none}
+  .quiz-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+  .counter{font-weight:900;color:#3e5d40;font-size:17px}.score-chip{display:flex;align-items:center;gap:5px;background:#fff;border:1px solid #eadfbd;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:850;color:#7b512d;white-space:nowrap}.score-value{font-size:18px;color:#3f6846}.score-rule{font-size:12px;font-weight:700;color:#756d5d;margin-left:3px}
+  .progress-wrap{margin-bottom:22px}
+  .progress-caption{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:#77705f;margin:0 1px 8px}
+  .steps{height:14px;border-radius:99px;background:#e8dfc8;overflow:hidden;box-shadow:inset 0 1px 2px #59613a1c}
+  .progress-fill{display:block;width:0;height:100%;border-radius:inherit;background:linear-gradient(90deg,#8fbd69,#4c8c58);transition:width .45s ease}
+  .stage-area{position:relative;isolation:isolate;border:1px solid #d9e1bb;border-radius:24px;min-height:300px;height:clamp(310px,36vw,380px);overflow:hidden;background:linear-gradient(#d9edcf 0%,#eaf1cd 62%,#bdd18d 63%,#a9c27d 100%);display:flex;align-items:center;justify-content:center;margin-bottom:22px}
+  .stage-area:before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,#728e4b55 0 18%,transparent 60%);z-index:-1}
+  .forest-decor{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.65;z-index:1}
+  .elk-target{position:relative;z-index:10;display:flex;align-items:center;justify-content:center;width:min(450px,85%);height:100%;cursor:pointer;outline:none;touch-action:manipulation;border-radius:20px;overflow:visible}
+  .elk-target:focus-visible{outline:4px solid #edb846;outline-offset:-6px}
+  .elk-stage-container{position:relative;z-index:10;width:100%;height:calc(100% - 20px);display:flex;align-items:center;justify-content:center}
+  
+  /* 測驗畫面麋鹿圖：放大尺寸 */
+  .elk-img{display:none;position:relative;z-index:10;max-height:100%;max-width:100%;object-fit:contain;transform:scale(1.25);filter:drop-shadow(0 8px 10px #323d1d33);transform-origin:50% 88%}
+  .elk-img.active{display:block;animation:stageAppear .6s cubic-bezier(.2,.8,.3,1.2)}
+  .elk-img.happy{animation:happy .68s ease-in-out}
+  @keyframes stageAppear{0%{opacity:.45;transform:translateY(15px) scale(1.1)}100%{opacity:1;transform:translateY(0) scale(1.25)}}
+  @keyframes happy{0%,100%{transform:rotate(0) translateY(0) scale(1.25)}25%{transform:rotate(-5deg) translateY(-8px) scale(1.28)}55%{transform:rotate(5deg) translateY(-12px) scale(1.3)}80%{transform:rotate(-3deg) translateY(-4px) scale(1.27)}}
+  
+  .stage-label{position:absolute;left:16px;bottom:13px;z-index:12;background:#fff9e8e8;color:#45613d;font-size:13px;font-weight:850;border:1px solid #d4e0b6;border-radius:99px;padding:8px 13px}
+  .drop-hint{position:absolute;right:15px;bottom:13px;z-index:12;color:#526445;font-size:13px;background:#f7f6dfd9;padding:8px 12px;border-radius:99px}
+  .question-card{background:#fffdf5;border:1px solid #eadfbe;border-radius:20px;padding:clamp(18px,3vw,25px);box-shadow:0 7px 18px #65552a0c}
+  .question-label{font-size:13px;font-weight:850;color:#a16a30;letter-spacing:.08em;margin-bottom:8px}
+  .question{font-size:clamp(20px,3vw,27px);line-height:1.5;font-weight:900;color:#3c4935;margin:0}
+  .hint-row{display:flex;align-items:center;gap:10px;margin-top:11px;min-height:25px}
+  .hint-button{border:0;background:transparent;text-decoration:underline;text-underline-offset:3px;color:#8c6740;font-size:13px;cursor:pointer;padding:3px 0}
+  .hint-text{font-size:13px;color:#7e725c}
+  .apple-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:22px auto 8px;max-width:900px}
+  .apple{position:relative;isolation:isolate;min-height:126px;border:0;border-radius:47% 47% 43% 43% / 39% 39% 58% 58%;background:radial-gradient(ellipse at 31% 22%,#ff9890 0 6%,transparent 22%),linear-gradient(145deg,#ec5a4c 2%,#d63835 52%,#a8202a 100%);box-shadow:inset -8px -10px 0 #8d172528,inset 6px 6px 0 #ffb1a02e,0 6px 0 #8d2429,0 12px 17px #773a2a24;color:white;font-weight:900;font-size:clamp(13px,1.6vw,16px);line-height:1.35;padding:22px 13px 14px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;transition:transform .18s,box-shadow .18s,filter .18s;display:flex;align-items:center;justify-content:center;text-align:center;text-shadow:0 1px 3px #661515b0}
+  .apple:before{content:"";position:absolute;z-index:-1;top:-9px;left:calc(50% - 3px);width:7px;height:19px;border-radius:8px;background:#665038;transform:rotate(7deg)}
+  .apple:after{content:"";position:absolute;z-index:-1;top:-7px;left:calc(50% + 1px);width:17px;height:10px;border-radius:100% 0 100% 0;background:#5f9652;transform:rotate(-19deg)}
+  .apple:hover{transform:translateY(-4px) rotate(-1deg);filter:brightness(1.05);box-shadow:inset -8px -10px 0 #8d172528,inset 6px 6px 0 #ffb1a02e,0 9px 0 #8d2429,0 15px 20px #773a2a2c}
+  .apple:active{cursor:grabbing}.apple.selected{outline:4px solid #f5c84e;outline-offset:3px;transform:translateY(-4px)}
+  .apple:focus-visible{outline:4px solid #f5c84e;outline-offset:4px}
+  .apple.wrong{animation:wobble .36s ease}
+  @keyframes wobble{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px) rotate(-4deg)}75%{transform:translateX(8px) rotate(4deg)}}
+  .feedback{min-height:28px;text-align:center;font-weight:800;color:#577444;font-size:15px;margin:14px auto 4px}
+  .feedback.error{color:#a65347}.feedback.success{color:#3d754b}
+  .instructions{text-align:center;color:#78715f;font-size:13px;margin:2px 0 0}
+  .particles{position:absolute;inset:0;z-index:15;pointer-events:none;overflow:hidden}
+  .particle{position:absolute;font-size:23px;animation:floatUp 950ms ease-out forwards;filter:drop-shadow(0 2px 2px #634a2450)}
+  @keyframes floatUp{0%{opacity:0;transform:translate(0,0) scale(.5) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--dx),-125px) scale(1.4) rotate(var(--rot))}}
+  .complete{display:none;text-align:center;padding:45px 15px 35px;min-height:580px}
+  .complete .trophy{font-size:70px;animation:bob 1.5s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(-9px) rotate(4deg)}}
+  .complete h2{font-size:clamp(30px,5vw,46px);color:#36583d;margin:10px 0}
+  .complete p{font-size:18px;line-height:1.8;color:#645d4c;max-width:620px;margin:12px auto 25px}
+  .final-score{display:inline-block;border-radius:18px;background:#f0f3db;color:#47643f;padding:13px 22px;font-size:20px;font-weight:900;margin-bottom:25px}
+  .source-note{margin-top:22px;border-top:1px dashed #d8cdaa;padding-top:14px;text-align:left;color:#706956;font-size:12px;line-height:1.7}
+  .source-note a{color:#416744;overflow-wrap:anywhere}
+  .drag-ghost{position:fixed;z-index:1000;pointer-events:none;transform:translate(-50%,-50%) scale(1.08) rotate(-4deg);opacity:.92;filter:drop-shadow(0 12px 10px #4d342c45)}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  /* Responsive layout */
+  html,body{max-width:100%;overflow-x:clip}
+  .page{width:min(1120px,100%);padding:clamp(12px,2.2vw,22px) clamp(12px,2.2vw,22px) clamp(20px,3vw,32px)}
+  .game{min-height:0}
+  .screen{padding:clamp(16px,3.2vw,38px)}
+  .intro{min-height:clamp(440px,calc(100svh - 145px),610px);gap:clamp(12px,2.3vw,24px)}
+  .topline{flex-wrap:wrap;min-width:0;gap:clamp(8px,1.4vw,14px)}
+  .brand{min-width:0;overflow-wrap:anywhere}
+  .source-pill{max-width:100%;white-space:normal;text-align:center;overflow-wrap:anywhere}
+  .quiz-head{align-items:center;flex-wrap:wrap}
+  .score-chip{max-width:100%;white-space:normal;flex-wrap:wrap;justify-content:center;line-height:1.35}
+  .progress-caption{align-items:baseline;flex-wrap:wrap}
+  .stage-area{height:clamp(280px,40svh,380px);min-height:250px}
+  .elk-target{width:min(450px,85%);height:100%;padding-bottom:20px}
+  .apple-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(9px,1.35vw,14px);width:100%}
+  .apple{min-width:0;min-height:clamp(98px,11.5vw,126px);padding:clamp(17px,2vw,22px) clamp(8px,1.2vw,13px) 14px;overflow-wrap:anywhere;word-break:normal}
+  .question,.hint-text,.instructions,.source-note{overflow-wrap:anywhere}
+  .complete{min-height:0}
+  .intro-art{min-width:0}
+
+  @media (max-width:900px){
+    .page{padding-top:14px}
+    .intro{grid-template-columns:1fr 0.9fr;min-height:clamp(430px,calc(100svh - 130px),570px)}
+    .intro-copy{padding-left:4px}
+    .intro-art{min-height:clamp(260px,38vw,340px)}
+    .intro-art .sun{width:clamp(160px,22vw,220px);height:clamp(160px,22vw,220px);right:8%}
+    .stage-area{height:clamp(250px,36svh,330px);min-height:230px}
+    .apple-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:680px}
+    .apple{min-height:clamp(100px,13vw,120px);font-size:clamp(13px,1.8vw,16px)}
+  }
+
+  @media (max-width:640px){
+    .page{padding:10px 10px 20px}
+    .topline{margin:0 2px 10px;align-items:flex-start}
+    .brand{font-size:clamp(17px,5vw,22px)}
+    .brand span{width:32px;height:32px;margin-right:5px;font-size:18px}
+    .source-pill{margin-left:auto;font-size:clamp(10px,2.8vw,12px);padding:6px 9px}
+    .game{border-radius:clamp(18px,5vw,24px)}
+    .screen{padding:clamp(14px,4.2vw,22px) clamp(12px,4vw,18px) clamp(20px,5vw,28px)}
+    .intro{grid-template-columns:minmax(0,1fr);min-height:0;gap:0}
+    .intro-copy{padding:5px 2px 0}
+    h1{font-size:clamp(34px,10vw,52px);margin:14px 0 12px}
+    .intro-copy p{font-size:clamp(15px,4vw,18px);line-height:1.7;margin-bottom:18px}
+    .start-row{gap:10px}
+    .primary{padding:12px 21px}
+    .tiny-note{font-size:12px}
+    .intro-art{order:2;min-height:clamp(205px,58vw,270px);margin-top:2px}
+    .intro-art .sun{width:clamp(145px,45vw,190px);height:clamp(145px,45vw,190px);top:5px;right:14%}
+    .intro-art .tree{height:clamp(130px,38vw,160px);bottom:0}
+    .quiz-head{margin-bottom:12px;gap:8px}
+    .counter{font-size:clamp(14px,4vw,17px)}
+    .score-chip{gap:4px;padding:7px 10px;font-size:clamp(12px,3.4vw,14px)}
+    .score-value{font-size:16px}
+    .score-rule{font-size:11px}
+    .progress-wrap{margin-bottom:15px}
+    .progress-caption{font-size:clamp(11px,3.2vw,13px);gap:4px 10px}
+    .stage-area{height:clamp(240px,68vw,310px);min-height:220px;margin-bottom:14px;border-radius:19px}
+    .elk-target{width:96%;padding-bottom:20px}
+    .stage-label{left:8px;bottom:8px;font-size:clamp(10px,2.8vw,12px);padding:6px 9px}
+    .drop-hint{right:8px;bottom:8px;max-width:56%;font-size:clamp(10px,2.7vw,12px);padding:6px 8px;text-align:center}
+    .question-card{padding:clamp(15px,4vw,20px);border-radius:17px}
+    .question-label{font-size:12px}
+    .question{font-size:clamp(19px,5.6vw,24px);line-height:1.42}
+    .hint-row{flex-wrap:wrap;gap:5px 9px}
+    .apple-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,3vw,14px);margin:16px auto 8px}
+    .apple{min-height:clamp(94px,29vw,116px);font-size:clamp(12px,3.6vw,15px);padding:18px 8px 12px}
+    .feedback{font-size:14px;line-height:1.5}
+    .instructions{font-size:12px;line-height:1.55}
+    .complete{padding:28px 8px 24px}
+    .complete p{font-size:16px}
+    .final-score{max-width:100%;font-size:clamp(16px,4.5vw,20px);line-height:1.5;padding:11px 15px}
+  }
+
+  @media (max-width:380px){
+    .source-pill{display:none}
+    .quiz-head{align-items:flex-start}
+    .score-chip{max-width:190px;justify-content:flex-start}
+    .score-rule{width:100%;margin-left:0}
+    .stage-area{height:245px;min-height:220px}
+    .drop-hint{max-width:53%}
+    .apple{min-height:92px;font-size:12px;padding-left:6px;padding-right:6px}
+  }
+
+  @media (max-height:680px){
+    .page{padding-top:8px;padding-bottom:16px}
+    .screen{padding-top:clamp(12px,2.4vh,24px);padding-bottom:clamp(16px,3vh,28px)}
+    .intro{min-height:0}
+    .intro-art{min-height:clamp(190px,34svh,280px)}
+    .quiz-head{margin-bottom:10px}
+    .progress-wrap{margin-bottom:12px}
+    .stage-area{height:clamp(210px,38svh,265px);min-height:200px;margin-bottom:12px}
+    .elk-target{padding-bottom:20px}
+    .apple-grid{margin-top:14px}
+    .complete{min-height:0;padding-top:20px}
+  }
+
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="topline"><div class="brand"><span aria-hidden="true">🦌</span>淡江大學麋鹿養成記</div><div class="source-pill">15 題校園知識冒險・免網路也能玩</div></header>
+  <main class="game" id="game">
+    <section class="screen intro" id="intro" aria-labelledby="intro-title">
+      <div class="intro-copy">
+        <div class="eyebrow">🍎 淡江校園麋鹿養成任務</div>
+        <h1 id="intro-title">淡江大學的<em>麋鹿養成</em></h1>
+        <p>陪小麋鹿認識淡江大學！答對校園建築代號小知識，牠就會從麋鹿寶寶一步步長成大麋鹿。</p>
+        <div class="start-row"><button class="primary" id="startButton">開始冒險 ➜</button><span class="tiny-note">共 15 題・四顆蘋果・答錯可以再試</span></div>
+      </div>
+      <div class="intro-art" aria-hidden="true">
+        <div class="sun"></div>
+        <svg class="tree" viewBox="0 0 500 210" preserveAspectRatio="none"><path d="M0 190 Q90 90 180 180 Q275 68 370 180 Q440 92 500 160 V210 H0Z" fill="#8faf70"/><path d="M0 205 Q120 135 240 199 Q370 130 500 190 V210 H0Z" fill="#668e5a"/><g fill="#4f7a4f"><path d="M58 163 90 72 122 163h-20v27H78v-27Z"/><path d="M355 160 390 55 425 160h-21v32h-28v-32Z"/><path d="M430 170 455 98 480 170h-15v23h-20v-23Z"/></g><g fill="#dce9ae"><circle cx="170" cy="175" r="4"/><circle cx="300" cy="176" r="4"/><circle cx="260" cy="156" r="3"/></g></svg>
+        <div class="elk-img-wrapper">
+          <!-- 初始畫面已設定為 1.webp -->
+          <img src="1.webp" alt="可愛的麋鹿寶寶" class="elk-img" />
+        </div>
+      </div>
+    </section>
+
+    <section class="screen quiz-screen" id="quiz" aria-label="測驗題目">
+      <div class="quiz-head"><div class="counter" id="counter">第 1 / 15 題</div><div class="score-chip" id="scoreChip" aria-live="polite" aria-label="目前分數 100 分；每答錯一次扣 5 分，最低 0 分">⭐ 分數 <strong class="score-value" id="scoreValue">100</strong> 分 <span class="score-rule">答錯 −5 分・最低 0 分</span></div></div>
+      <div class="progress-wrap"><div class="progress-caption"><span>作答進度</span><span id="completionProgressText">已完成 0 / 15 題</span></div><div class="steps" id="steps" role="progressbar" aria-label="已完成題目進度" aria-valuemin="0" aria-valuemax="15" aria-valuenow="0"><span class="progress-fill" id="progressFill"></span></div><div class="progress-caption" style="margin-top:7px"><span>麋鹿成長</span><span id="stageProgressText">寶寶期・再答對 5 題就長大</span></div></div>
+      <div class="stage-area" id="stageArea">
+        <svg class="forest-decor" viewBox="0 0 900 330" preserveAspectRatio="none" aria-hidden="true"><g fill="#88a76e"><path d="M0 213 54 80l54 133H78v62H31v-62ZM97 225 135 125l38 100h-18v42h-41v-42ZM708 222l54-135 54 135h-20v55h-49v-55ZM820 214l42-105 42 105h-15v51h-42v-51Z"/></g><g fill="#6d925e"><path d="M25 259 68 149l42 110H94v44H48v-44ZM761 265l45-113 45 113h-18v39h-52v-39Z"/></g><path d="M0 289Q130 257 250 286T500 282T900 278V330H0Z" fill="#9bb975"/><g fill="#fff4cf"><circle cx="156" cy="283" r="4"/><circle cx="678" cy="278" r="4"/><circle cx="617" cy="293" r="3"/><circle cx="242" cy="298" r="3"/></g></svg>
+        <div class="particles" id="particles" aria-hidden="true"></div>
+        <div class="elk-target" id="elkTarget" role="button" tabindex="0" aria-label="麋鹿接收蘋果；點擊以送出已選擇的答案">
+          <div class="elk-stage-container" id="elkStageContainer">
+            <img src="1.webp" alt="麋鹿寶寶" class="elk-img active" data-stage="baby" />
+            <img src="2.webp" alt="中年時期麋鹿" class="elk-img" data-stage="young" />
+            <img src="3.webp" alt="壯年時期麋鹿" class="elk-img" data-stage="adult" />
+          </div>
+        </div>
+        <div class="stage-label" id="stageLabel">🦌 麋鹿寶寶</div><div class="drop-hint">把正確蘋果送到麋鹿身上！</div>
+      </div>
+      <div class="question-card"><div class="question-label">校園知識挑戰</div><h2 class="question" id="questionText">題目載入中…</h2><div class="hint-row"><button class="hint-button" id="hintButton" type="button">給我一個小提示</button><span class="hint-text" id="hintText" aria-live="polite"></span></div></div>
+      <div class="apple-grid" id="appleGrid" aria-label="四個蘋果答案選項"></div>
+      <div class="feedback" id="feedback" aria-live="polite">拖曳蘋果到麋鹿，或先點選蘋果再點麋鹿。</div>
+      <p class="instructions">小技巧：電腦可拖曳；手機可滑動拖曳，也能點蘋果後再點麋鹿。</p>
+      <div class="source-note"><strong>題目資料來源</strong><br>淡江大學空間代碼參考：<a href="https://tku.miraheze.org/wiki/zh-Hant/%E6%B7%A1%E6%B1%9F%E5%A4%A7%E5%AD%B8%E7%A9%BA%E9%96%93%E4%BB%A3%E7%A2%BC" target="_blank" rel="noopener">淡江大學空間代碼</a><br>本測驗題目清單依此參考資料及使用者提供的代號／名稱清單編製；題目只考建築與空間代號配對。依使用者清單，O、Q 均以「傳播館」呈現，因此不設該名稱的反向題。</div>
+    </section>
+
+    <section class="screen complete" id="complete" aria-labelledby="completeTitle">
+      <div class="trophy" aria-hidden="true">🏆</div><h2 id="completeTitle">探險完成！</h2><div class="final-score" id="finalScore">最終分數 100 分・答對 0 / 15 題</div>
+      <p id="completeMessage">麋鹿已經長大了！</p><button class="primary" id="restartButton">再玩一次 ↻</button>
+      <div class="source-note"><strong>題目資料來源</strong><br>淡江大學空間代碼參考：<a href="https://tku.miraheze.org/wiki/zh-Hant/%E6%B7%A1%E6%B1%9F%E5%A4%A7%E5%AD%B8%E7%A9%BA%E9%96%93%E4%BB%A3%E7%A2%BC" target="_blank" rel="noopener">淡江大學空間代碼</a><br>本測驗題目清單依此參考資料及使用者提供的代號／名稱清單編製；題目只考建築與空間代號配對。依使用者清單，O、Q 均以「傳播館」呈現，因此不設該名稱的反向題。</div>
+    </section>
+  </main>
+</div>
+<script>
+(() => {
+  'use strict';
+
+  const QUIZ_LENGTH = 15;
+  const questionBank = [
+    {question:"校園空間代號「A」代表哪一棟？",answer:"行政大樓",distractors:["商管大樓","鍾靈化學館","工學大樓"],hint:"從清單中找出行政大樓對應的單一英文字母。"},
+    {question:"商管大樓的建築代號是什麼？",answer:"B",distractors:["A","C","ED"],hint:"這是清單中的單一英文字母代號。"},
+    {question:"校園空間代號「C」代表哪一棟？",answer:"鍾靈化學館",distractors:["行政大樓","建築館","文學館"],hint:"它是清單中以化學為名的館舍。"},
+    {question:"工學大樓的建築代號是什麼？",answer:"E",distractors:["B","G","K"],hint:"請分清工學大樓與工學館，兩者代號不同。"},
+    {question:"校園空間代號「ED」代表哪一棟？",answer:"教育大樓",distractors:["行政大樓","商管大樓","宮燈教室"],hint:"這是清單中以教育為名的大樓。"},
+    {question:"工學館的建築代號是什麼？",answer:"G",distractors:["E","C","K"],hint:"它不是「工學大樓」的代號。"},
+    {question:"校園空間代號「HC」代表哪一處？",answer:"守謙國際會議中心",distractors:["覺生綜合大樓","學生活動中心","紹謨紀念活動中心"],hint:"這是清單中的國際會議中心。"},
+    {question:"建築館的建築代號是什麼？",answer:"K",distractors:["C","E","G"],hint:"依清單，這個館舍以單一英文字母標示。"},
+    {question:"校園空間代號「O」代表哪一處？",answer:"傳播館",distractors:["學生活動中心","商管大樓","教育大樓"],hint:"依使用者提供清單，O 的顯示名稱為傳播館。"},
+    {question:"校園空間代號「Q」代表哪一處？",answer:"傳播館",distractors:["學生活動中心","商管大樓","教育大樓"],hint:"依使用者提供清單，Q 的顯示名稱也為傳播館。"},
+    {question:"網球場的空間代號是什麼？",answer:"RT",distractors:["SS","XC","X"],hint:"它是兩個英文字母的空間代號。"},
+    {question:"校園空間代號「S」代表哪一棟？",answer:"騮先紀念科學館",distractors:["驚聲紀念大樓","工學館","鍾靈化學館"],hint:"請注意它與 T 所代表的建築不同。"},
+    {question:"校園空間代號「T」代表哪一棟？",answer:"驚聲紀念大樓",distractors:["騮先紀念科學館","教育大樓","文學館"],hint:"清單中 T 對應的名稱含有「驚聲」。"},
+    {question:"校史館暨張建邦創辦人紀念館的空間代號是什麼？",answer:"TH",distractors:["ED","T","S"],hint:"這是兩個英文字母的代號。"},
+    {question:"校園空間代號「XC」代表哪一處？",answer:"五虎崗綜合球場",distractors:["五虎崗停車場","溜冰場","網球場"],hint:"它是綜合球場，不是停車場或其他球場。"}
+  ];
+
+  const intro = document.getElementById('intro');
+  const quiz = document.getElementById('quiz');
+  const complete = document.getElementById('complete');
+  const startButton = document.getElementById('startButton');
+  const restartButton = document.getElementById('restartButton');
+  const questionText = document.getElementById('questionText');
+  const appleGrid = document.getElementById('appleGrid');
+  const feedback = document.getElementById('feedback');
+  const counter = document.getElementById('counter');
+  const scoreChip = document.getElementById('scoreChip');
+  const scoreValue = document.getElementById('scoreValue');
+  const steps = document.getElementById('steps');
+  const progressFill = document.getElementById('progressFill');
+  const completionProgressText = document.getElementById('completionProgressText');
+  const stageLabel = document.getElementById('stageLabel');
+  const stageProgressText = document.getElementById('stageProgressText');
+  const elkTarget = document.getElementById('elkTarget');
+  const elkStageContainer = document.getElementById('elkStageContainer');
+  const hintButton = document.getElementById('hintButton');
+  const hintText = document.getElementById('hintText');
+  const particles = document.getElementById('particles');
+  const stageArea = document.getElementById('stageArea');
+
+  let quizQuestions = [];
+  let questionIndex = 0;
+  let score = 100;
+  let correctCount = 0;
+  let selectedOption = null;
+  let answerLocked = false;
+  let currentStage = -1;
+  let dragState = null;
+  let suppressClickUntil = 0;
+  let recentAnswerAction = null;
+
+  function shuffle(items) {
+    const copy = [...items];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  }
+
+  function prepareQuiz() {
+    quizQuestions = shuffle(questionBank).slice(0, Math.min(QUIZ_LENGTH, questionBank.length)).map(item => ({
+      ...item,
+      options: shuffle([item.answer, ...item.distractors])
+    }));
+  }
+
+  function beginQuiz() {
+    prepareQuiz();
+    questionIndex = 0;
+    score = 100;
+    correctCount = 0;
+    selectedOption = null;
+    answerLocked = false;
+    currentStage = -1;
+    complete.style.display = 'none';
+    intro.style.display = 'none';
+    quiz.style.display = 'block';
+    updateScore();
+    updateProgress();
+    updateStageGrowth();
+    showQuestion();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  function showQuestion() {
+    if (questionIndex >= quizQuestions.length) {
+      showCompletion();
+      return;
+    }
+    answerLocked = false;
+    selectedOption = null;
+    hintText.textContent = '';
+    feedback.textContent = '拖曳蘋果到麋鹿，或先點選蘋果再點麋鹿。';
+    feedback.className = 'feedback';
+    const item = quizQuestions[questionIndex];
+    questionText.textContent = item.question;
+    counter.textContent = `第 ${questionIndex + 1} / ${QUIZ_LENGTH} 題`;
+    appleGrid.innerHTML = '';
+    item.options.forEach((option, index) => {
+      const apple = document.createElement('button');
+      apple.type = 'button';
+      apple.className = 'apple';
+      apple.textContent = option;
+      apple.draggable = true;
+      apple.dataset.optionIndex = String(index);
+      apple.setAttribute('aria-label', `蘋果選項：${option}。可拖曳到麋鹿，或點擊選取`);
+      apple.addEventListener('click', () => {
+        if (Date.now() < suppressClickUntil || answerLocked) return;
+        chooseOption(index);
+      });
+      apple.addEventListener('dragstart', event => {
+        if (answerLocked) { event.preventDefault(); return; }
+        event.dataTransfer.setData('text/plain', String(index));
+        event.dataTransfer.effectAllowed = 'move';
+        selectedOption = index;
+      });
+      apple.addEventListener('dragend', () => {});
+      appleGrid.appendChild(apple);
+    });
+    updateProgress();
+  }
+
+  function chooseOption(index) {
+    selectedOption = index;
+    [...appleGrid.children].forEach((apple, i) => apple.classList.toggle('selected', i === index));
+    feedback.textContent = '選好了！現在點一下麋鹿送出蘋果。';
+    feedback.className = 'feedback';
+  }
+
+  function handleDrop(index, source = 'direct') {
+    if (answerLocked || questionIndex >= quizQuestions.length) return;
+    if (!Number.isInteger(index) || index < 0 || index > 3) return;
+    const now = Date.now();
+    const dragSources = ['native-drag', 'pointer-drag'];
+    if (recentAnswerAction && recentAnswerAction.index === index && dragSources.includes(recentAnswerAction.source) && dragSources.includes(source) && recentAnswerAction.source !== source && now - recentAnswerAction.time < 500) return;
+    recentAnswerAction = {index, source, time: now};
+    const item = quizQuestions[questionIndex];
+    if (item.options[index] === item.answer) {
+      answerLocked = true;
+      correctCount += 1;
+      questionIndex += 1;
+      selectedOption = null;
+      updateProgress();
+      updateStageGrowth();
+      feedback.textContent = '答對了！麋鹿開心地收下蘋果，繼續長大 ✨（分數不變）';
+      feedback.className = 'feedback success';
+      celebrate();
+      setTimeout(() => {
+        showQuestion();
+      }, 1050);
+    } else {
+      score = Math.max(0, score - 5);
+      updateScore();
+      const apple = appleGrid.querySelector(`[data-option-index="${index}"]`);
+      if (apple) {
+        apple.classList.remove('wrong');
+        void apple.offsetWidth;
+        apple.classList.add('wrong');
+      }
+      feedback.textContent = `答錯了，扣 5 分（最低 0 分）！目前 ${score} 分。這顆蘋果先放回去，再試試別顆吧。`;
+      feedback.className = 'feedback error';
+      selectedOption = null;
+      [...appleGrid.children].forEach(button => button.classList.remove('selected'));
+    }
+  }
+
+  function updateScore() {
+    scoreValue.textContent = String(score);
+    scoreChip.setAttribute('aria-label', `目前分數 ${score} 分；每答錯一次扣 5 分，最低 0 分；答對不加分`);
+  }
+
+  function updateProgress() {
+    const completed = Math.min(questionIndex, QUIZ_LENGTH);
+    progressFill.style.width = `${(completed / QUIZ_LENGTH) * 100}%`;
+    completionProgressText.textContent = `已完成 ${completed} / ${QUIZ_LENGTH} 題`;
+    steps.setAttribute('aria-valuenow', String(completed));
+  }
+
+  function updateStageGrowth() {
+    const stage = correctCount < 5 ? 0 : correctCount < 10 ? 1 : 2;
+    const stageNames = ['🦌 麋鹿寶寶', '🦌 中年時期麋鹿', '🦌 壯年大麋鹿'];
+    const progressNames = [
+      `寶寶期・再答對 ${Math.max(0, 5 - correctCount)} 題就長大`,
+      `成長期・再答對 ${Math.max(0, 10 - correctCount)} 題成為壯年大麋鹿`,
+      '成年期・麋鹿已經長大！'
+    ];
+    stageLabel.textContent = stageNames[stage];
+    stageProgressText.textContent = progressNames[stage];
+    if (stage !== currentStage) {
+      currentStage = stage;
+      elkStageContainer.querySelectorAll('.elk-img').forEach(img => {
+        img.classList.toggle('active', img.dataset.stage === ['baby','young','adult'][stage]);
+      });
+    }
+  }
+
+  function celebrate() {
+    const activeElk = elkStageContainer.querySelector('.elk-img.active');
+    if (activeElk) {
+      activeElk.classList.remove('happy');
+      void activeElk.offsetWidth;
+      activeElk.classList.add('happy');
+      setTimeout(() => activeElk.classList.remove('happy'), 720);
+    }
+    const symbols = ['💛','✨','🌟','💚','⭐'];
+    const rect = stageArea.getBoundingClientRect();
+    for (let i = 0; i < 16; i++) {
+      const particle = document.createElement('span');
+      particle.className = 'particle';
+      particle.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+      particle.style.left = `${rect.width * (.30 + Math.random() * .40)}px`;
+      particle.style.top = `${rect.height * (.45 + Math.random() * .28)}px`;
+      particle.style.setProperty('--dx', `${Math.round((Math.random() - .5) * 170)}px`);
+      particle.style.setProperty('--rot', `${Math.round((Math.random() - .5) * 90)}deg`);
+      particle.style.animationDelay = `${Math.random() * 120}ms`;
+      particles.appendChild(particle);
+      setTimeout(() => particle.remove(), 1200);
+    }
+    if (navigator.vibrate) navigator.vibrate(35);
+  }
+
+  function showCompletion() {
+    quiz.style.display = 'none';
+    complete.style.display = 'block';
+    document.getElementById('finalScore').textContent = `最終分數 ${score} 分（答錯每次 −5 分，最低 0 分；答對不加分）・答對 ${correctCount} / ${QUIZ_LENGTH} 題`;
+    const message = correctCount === QUIZ_LENGTH
+      ? '太厲害了！你對淡江校園瞭若指掌，成功把小麋鹿養育成淡江頂級大神鹿！'
+      : correctCount >= 10
+        ? '表現超棒！麋鹿已經成為壯年大麋鹿，再玩一次挑戰滿分吧！'
+        : '每一次探索都會有新發現！再玩一次，陪麋鹿認識更多校園建築代號。';
+    document.getElementById('completeMessage').textContent = message;
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+
+  startButton.addEventListener('click', beginQuiz);
+  restartButton.addEventListener('click', beginQuiz);
+  elkTarget.addEventListener('click', () => {
+    if (selectedOption !== null) handleDrop(selectedOption);
+    else if (!answerLocked) {
+      feedback.textContent = '先點選一顆蘋果，或直接把蘋果拖到麋鹿身上喔。';
+      feedback.className = 'feedback';
+    }
+  });
+  elkTarget.addEventListener('keydown', event => {
+    if ((event.key === 'Enter' || event.key === ' ') && selectedOption !== null) {
+      event.preventDefault();
+      handleDrop(selectedOption);
+    }
+  });
+  elkTarget.addEventListener('dragover', event => { event.preventDefault(); event.dataTransfer.dropEffect = 'move'; });
+  elkTarget.addEventListener('drop', event => {
+    event.preventDefault();
+    const index = Number(event.dataTransfer.getData('text/plain'));
+    handleDrop(index, 'native-drag');
+  });
+  hintButton.addEventListener('click', () => {
+    if (questionIndex < quizQuestions.length) hintText.textContent = `提示：${quizQuestions[questionIndex].hint}`;
+  });
+
+  document.addEventListener('pointerdown', event => {
+    const apple = event.target.closest('.apple');
+    if (!apple || event.pointerType === 'mouse' || answerLocked) return;
+    dragState = {index: Number(apple.dataset.optionIndex), startX: event.clientX, startY: event.clientY, apple, ghost: null, moved: false, pointerId: event.pointerId};
+  }, {passive: true});
+  document.addEventListener('pointermove', event => {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    const dx = event.clientX - dragState.startX;
+    const dy = event.clientY - dragState.startY;
+    if (!dragState.moved && Math.hypot(dx, dy) > 12) {
+      dragState.moved = true;
+      dragState.ghost = dragState.apple.cloneNode(true);
+      dragState.ghost.className = 'apple drag-ghost';
+      dragState.ghost.style.width = `${dragState.apple.getBoundingClientRect().width}px`;
+      document.body.appendChild(dragState.ghost);
+      dragState.apple.style.opacity = '.38';
+    }
+    if (dragState.moved && dragState.ghost) {
+      event.preventDefault();
+      dragState.ghost.style.left = `${event.clientX}px`;
+      dragState.ghost.style.top = `${event.clientY}px`;
+    }
+  }, {passive: false});
+  document.addEventListener('pointerup', event => {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+    const state = dragState;
+    dragState = null;
+    state.apple.style.opacity = '';
+    if (state.ghost) state.ghost.remove();
+    if (state.moved) {
+      suppressClickUntil = Date.now() + 500;
+      const rect = elkTarget.getBoundingClientRect();
+      if (event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom) {
+        handleDrop(state.index, 'pointer-drag');
+      }
+      else {
+        feedback.textContent = '蘋果沒有落在麋鹿身上，再試一次或點選蘋果作答。';
+        feedback.className = 'feedback';
+      }
+    }
+  }, {passive: true});
+  document.addEventListener('pointercancel', () => {
+    if (dragState) { dragState.apple.style.opacity = ''; if (dragState.ghost) dragState.ghost.remove(); dragState = null; }
+  }, {passive: true});
+})();
+</script>
+</body>
+</html>
